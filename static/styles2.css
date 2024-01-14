@@ -1,3 +1,8 @@
+/*-- -------------------------- -->
+<---           Animated BG      -->
+<--- -------------------------- -*/
+
+
 .bg {
     position: fixed;
     top: -50%;
@@ -6,12 +11,13 @@
     bottom: -50%;
     width: 200%;
     height: 200vh;
-    background: transparent url('http://assets.iceable.com/img/noise-transparent.png') repeat 0 0;
+    background: transparent url('../static/noise-transparent.png') repeat 0 0;
     background-repeat: repeat;
     animation: bg-animation .2s infinite;
     opacity: .9;
     visibility: visible;
-  }
+    z-index: -1; /* Set a lower z-index for the background */
+}
   
   @keyframes bg-animation {
       0% { transform: translate(0,0) }
@@ -27,16 +33,23 @@
       100% { transform: translate(5%,0) }
   }
 
-/*-- -------------------------- -->
-<---           Animated BG      -->
-<--- -------------------------- -*/
-
-
 
   body {
-    background-color: #111111;
     margin: 0;
-    overflow-x: hidden;
-    font-family: 'Roboto', sans-serif;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #111111;
+}
+
+  .clickable-image {
+    
+    position: relative; 
+    z-index: 1;
+    width: 350px;
+    height: 525px;
+    margin: 10px;
+     
   }
-  
