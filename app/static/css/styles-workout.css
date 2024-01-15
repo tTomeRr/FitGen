@@ -256,7 +256,7 @@ select option {
   padding: 40px;
 }
 
-.right-container .pets-weight .radio-container {
+.right-container .multi-select .radio-container {
   display: flex;
   justify-content: space-between;
   width: 100%;
