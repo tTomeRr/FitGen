@@ -1,0 +1,17 @@
+.env
+.venv
+venv/
+env/
+
+.idea
+.idea/
+
+__pycache__/
+migrations/
+*.py[cod]
+*$py.class
+.pyc
+
+instance/
+database.db
+```
