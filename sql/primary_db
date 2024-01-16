@@ -1,0 +1,62 @@
+CREATE TABLE workouts (
+  workout_id INT PRIMARY KEY AUTO_INCREMENT,
+  workout_name VARCHAR(50),
+  workout_type VARCHAR(50),
+  workout_duration VARCHAR(10),
+  fitness_level VARCHAR(20),
+  running_type VARCHAR(20),
+  fitness_goal VARCHAR(50),
+  equipment_access VARCHAR(50)
+);
+
+CREATE TABLE exercises (
+  exercise_id INT PRIMARY KEY AUTO_INCREMENT,
+  exercise_name VARCHAR(50),
+  exercise_type VARCHAR(50),
+  exercise_description VARCHAR(50)
+);
+
+CREATE TABLE WorkoutExercises (
+  WorkoutID INT,
+  ExerciseID INT,
+  Sets INT,
+  Repetitions VARCHAR(10),
+  FOREIGN KEY (WorkoutID) REFERENCES Workouts(WorkoutID),
+  FOREIGN KEY (ExerciseID) REFERENCES Exercises(ExerciseID)
+);
+
+INSERT INTO Workouts (workout_type, workout_duration, fitness_level, running_type, fitness_goal, equipment_access)
+VALUES
+  ('Upper Body Strength', '45 mins', 'Intermediate', null, 'Build muscle', 'Gym'),
+  ('Lower Body Strength', '30 mins', 'Beginner', null, 'Tone legs', 'None'),
+  ('Cardio HIIT', '20 mins', 'Intermediate', null, 'Improve endurance', 'None'),
+  ('Long Slow Run', '60 mins', 'Beginner', 'Outdoor', 'Increase distance', 'None'),
+  ('Total Body Strength', '45 mins', 'Advanced', null, 'Gain muscle', 'Gym'),
+  ('Core Strength', '30 mins', 'Beginner', null, 'Strong core', 'Gym'),
+  ('Short Hill Sprints', '15 mins', 'Advanced', 'Outdoor', 'Increase speed', 'None'),
+  ('Beginner Cardio', '20 mins', 'Beginner', 'Treadmill', 'Improve fitness', 'None'),
+  ('Upper Body Push', '30 mins', 'Intermediate', null, 'Build chest strength', 'Gym'),
+  ('Lower Body Cardio', '40 mins', 'Intermediate', null, 'Lose weight', 'None');
+
+
+
+INSERT INTO Exercises (exercise_name, exercise_type, exercise_description)
+VALUES
+  ('Rest', 'Active Recovery', 'Take a break and recover'),
+  ('Squats', 'Strength', 'Lower into squat position'),
+  ('Lunges', 'Strength', 'Step forward and lower into lunge'),
+  ('Plank', 'Strength', 'Hold body straight as a plank'),
+  ('Push-ups', 'Strength', 'Lower and raise chest off the floor'),
+  ('Pull-ups', 'Strength', 'Grab bar with palms facing away and pull body up'),
+  ('Chin-ups', 'Strength','Grab bar with palms facing you and pull body up'),
+  ('Dips', 'Strength', 'Lower and raise body between parallel bars'),
+  ('Burpees', 'Cardio', 'Squat down, kick feet back, do a push-up, jump up'),
+  ('Dead-lifts', 'Strength', 'Lift a weighted barbell off the floor'),
+  ('Bench Press', 'Strength', 'Lie on a bench and press a weighted barbell upwards'),
+  ('Overhead Press', 'Strength', 'Press a weighted barbell overhead'),
+  ('Bicep Curls', 'Strength', 'Curl dumbbells up to work biceps'),
+  ('Calf Raises', 'Strength', 'Raise up onto toes to work calves'),
+  ('Sprints', 'Cardio', 'Run short distances as fast as possible'),
+  ('Jogging', 'Cardio', 'Run at a steady, moderate pace'),
+  ('Hill Sprints', 'Cardio', 'Sprint up a hill then jog or walk back down'),
+  ('Walking', 'Cardio', 'Walk at a brisk steady pace');
