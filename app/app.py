@@ -1,8 +1,4 @@
 from flask import Flask, render_template, request
-from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField
-from wtforms import DecimalField, RadioField, SelectField, TextAreaField, FileField
-from wtforms.validators import InputRequired
 
 app = Flask(__name__)
 
