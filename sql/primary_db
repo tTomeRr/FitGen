@@ -99,3 +99,22 @@ VALUES
   (8, 16, 1, '65 min', 0),
   (9, 17, 8, '2 min', 2),
   (10, 16, 1, '20-30 min', 0);
+
+
+SELECT (workout_id, workout_name) FROM Workouts
+  WHERE workout_duration = '0-30'
+  AND fitness_level = 'beginner'
+  AND fitness_goal = 'lose-fat'
+  AND equipment_access = 'home';
+
+SELECT (exercise_name, Exercises.exercise_description, sets, repetitions, rest_time)
+FROM (
+  SELECT *
+  FROM Workouts
+  WHERE workout_duration = '0-30'
+  AND fitness_level = 'beginner'
+  AND fitness_goal = 'lose-fat'
+  AND equipment_access = 'home'
+) AS filtered_workout
+JOIN WorkoutExercises ON filtered_workout.workout_id = WorkoutExercises.workout_id
+JOIN Exercises ON WorkoutExercises.exercise_id = Exercises.exercise_id;
