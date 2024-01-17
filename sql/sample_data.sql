@@ -42,24 +42,24 @@ INSERT INTO Workouts  (workout_name, workout_type, workout_duration, fitness_lev
 
 INSERT INTO Exercises (exercise_name, exercise_type, exercise_description)
 VALUES
-  ('Rest', 'Active Recovery', 'Take a break and recover'),
-  ('Squats', 'Strength', 'Lower into squat position'),
-  ('Lunges', 'Strength', 'Step forward and lower into lunge'),
-  ('Plank', 'Strength', 'Hold body straight as a plank'),
-  ('Push-ups', 'Strength', 'Lower and raise chest off the floor'),
-  ('Pull-ups', 'Strength', 'Grab bar with palms facing away and pull body up'),
-  ('Chin-ups', 'Strength','Grab bar with palms facing you and pull body up'),
-  ('Dips', 'Strength', 'Lower and raise body between parallel bars'),
-  ('Burpees', 'Cardio', 'Squat down, kick feet back, do a push-up, jump up'),
-  ('Dead-lifts', 'Strength', 'Lift a weighted barbell off the floor'),
-  ('Bench Press', 'Strength', 'Lie on a bench and press a weighted barbell upwards'),
-  ('Overhead Press', 'Strength', 'Press a weighted barbell overhead'),
-  ('Bicep Curls', 'Strength', 'Curl dumbbells up to work biceps'),
-  ('Calf Raises', 'Strength', 'Raise up onto toes to work calves'),
-  ('Sprints', 'Cardio', 'Run short distances as fast as possible'),
-  ('Jogging', 'Cardio', 'Run at a steady, moderate pace'),
-  ('Hill Sprints', 'Cardio', 'Sprint up a hill then jog or walk back down'),
-  ('Walking', 'Cardio', 'Walk at a brisk steady pace');
+  ('Rest', 'Active Recovery', 'Take a break and recover'), 
+  ('Squats', 'Strength', 'Lower into squat position'), 
+  ('Lunges', 'Strength', 'Step forward and lower into lunge'), 
+  ('Plank', 'Strength', 'Hold body straight as a plank'), 
+  ('Push-ups', 'Strength', 'Lower and raise chest off the floor'), 
+  ('Pull-ups', 'Strength', 'Grab bar with palms facing away and pull body up'), 
+  ('Chin-ups', 'Strength','Grab bar with palms facing you and pull body up'), 
+  ('Dips', 'Strength', 'Lower and raise body between parallel bars'), 
+  ('Burpees', 'Cardio', 'Squat down, kick feet back, do a push-up, jump up'), 
+  ('Dead-lifts', 'Strength', 'Lift a weighted barbell off the floor'), 
+  ('Bench Press', 'Strength', 'Lie on a bench and press a weighted barbell upwards'), 
+  ('Overhead Press', 'Strength', 'Press a weighted barbell overhead'), 
+  ('Bicep Curls', 'Strength', 'Curl dumbbells up to work biceps'), 
+  ('Calf Raises', 'Strength', 'Raise up onto toes to work calves'), 
+  ('Sprints', 'Cardio', 'Run short distances as fast as possible'), 
+  ('Jogging', 'Cardio', 'Run at a steady, moderate pace'), 
+  ('Hill Sprints', 'Cardio', 'Sprint up a hill then jog or walk back down'), 
+  ('Walking', 'Cardio', 'Walk at a brisk steady pace'); 
 
 INSERT INTO WorkoutExercises (workout_id, exercise_id, sets, repetitions, rest_time)
 VALUES
@@ -102,19 +102,22 @@ VALUES
 
 
 SELECT (workout_id, workout_name) FROM Workouts
-  WHERE workout_duration = '0-30'
-  AND fitness_level = 'beginner'
-  AND fitness_goal = 'lose-fat'
+  WHERE workout_duration = '0-30' 
+  AND fitness_level = 'beginner' 
+  AND fitness_goal = 'lose-fat' 
   AND equipment_access = 'home';
 
 SELECT (exercise_name, Exercises.exercise_description, sets, repetitions, rest_time)
 FROM (
   SELECT *
   FROM Workouts
-  WHERE workout_duration = '0-30'
-  AND fitness_level = 'beginner'
-  AND fitness_goal = 'lose-fat'
+  WHERE workout_duration = '0-30' 
+  AND fitness_level = 'beginner' 
+  AND fitness_goal = 'lose-fat' 
   AND equipment_access = 'home'
 ) AS filtered_workout
 JOIN WorkoutExercises ON filtered_workout.workout_id = WorkoutExercises.workout_id
 JOIN Exercises ON WorkoutExercises.exercise_id = Exercises.exercise_id;
+
+SELECT * FROM Workouts
+
