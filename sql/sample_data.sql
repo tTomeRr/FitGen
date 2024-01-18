@@ -36,7 +36,7 @@ INSERT INTO Workouts  (workout_name, workout_type, workout_duration, fitness_lev
     ('Interval Training', 'run', '30-60', 'beginner', NULL, NULL, 'hiit'),
     ('Distance Running', 'run', '60+', 'intermediate', NULL, NULL, 'long-run'),
     ('Hill Repeats', 'run', '30-60', 'advanced', NULL, NULL, 'hiit'),
-    ('Easy Short Run', 'run', '0-30', 'advanced', NULL, NULL, 'hiit');
+    ('Easy Short Run', 'run', '0-30', 'advanced', NULL, NULL, 'hiit'),
     ('Core and Back Power', 'strength', '60+', 'intermediate', 'muscle', 'gym', NULL),
     ('Full Body Circuit', 'strength', '30-60', 'advanced', 'strength', 'gym', NULL),
     ('Home Cardio Strength', 'strength', '0-30', 'beginner', 'lose-fat', 'home', NULL),
@@ -183,6 +183,15 @@ FROM (
   AND fitness_goal = 'lose-fat' 
   AND equipment_access = 'home'
 ) AS filtered_workout
+
 JOIN WorkoutExercises ON filtered_workout.workout_id = WorkoutExercises.workout_id
 JOIN Exercises ON WorkoutExercises.exercise_id = Exercises.exercise_id;
 */
+
+/* Sample query to recieve the number of workouts */
+
+/*
+SELECT COUNT(*) FROM workouts;
+*/
+
+
