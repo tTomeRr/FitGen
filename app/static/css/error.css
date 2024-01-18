@@ -1,0 +1,167 @@
+/*-- -------------------------- -->
+<---        404 Page            -->
+<--- -------------------------- -*/
+
+
+  body {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100vh;
+    padding: 0px 30px;
+    font-family: "Roboto", sans-serif;
+  }
+  
+  .wrapper {
+    max-width: 960px;
+    width: 100%; 
+    margin: 30px auto;
+    transform: scale(0.8);
+  }
+  .landing-page {
+    margin: 0;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  svg {
+    width: 50%;
+    max-height: 225px;
+    height: auto;
+    margin: 0 0 15px;
+  }
+  h1 {
+    font-size: 108px;
+    margin: 0;
+    color: white;
+  }
+  p {
+    font-size: 36px;
+    width: 35%; 
+    margin: 16px auto 24px;
+    text-align: center;
+    color: white
+  }
+  button {
+    border-radius: 50px;
+    padding: 8px 24px;
+    font-size: 16px;
+    cursor: pointer;
+    background: #ff9100;
+    color: #fff;
+    border: none;
+    box-shadow: 0 4px 8px 0 #ccc;
+  }
+
+
+  /*-- -------------------------- -->
+<---           Animated BG      -->
+<--- -------------------------- -*/
+
+.bg {
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    right: -50%;
+    bottom: -50%;
+    width: 200%;
+    height: 200vh;
+    background: transparent url("../images/noise-transparent.png") repeat 0 0;
+    background-repeat: repeat;
+    animation: bg-animation 0.2s infinite;
+    opacity: 0.9;
+    visibility: visible;
+  }
+  
+  @keyframes bg-animation {
+    0% {
+      transform: translate(0, 0);
+    }
+    10% {
+      transform: translate(-5%, -5%);
+    }
+    20% {
+      transform: translate(-10%, 5%);
+    }
+    30% {
+      transform: translate(5%, -10%);
+    }
+    40% {
+      transform: translate(-5%, 15%);
+    }
+    50% {
+      transform: translate(-10%, 5%);
+    }
+    60% {
+      transform: translate(15%, 0);
+    }
+    70% {
+      transform: translate(0, 10%);
+    }
+    80% {
+      transform: translate(-15%, 0);
+    }
+    90% {
+      transform: translate(10%, 5%);
+    }
+    100% {
+      transform: translate(5%, 0);
+    }
+  }
+  
+  /*-- -------------------------- -->
+<---          Button            -->
+<--- -------------------------- -*/
+
+.cs-button-5 {
+  text-align: center;
+  font-size: 1.5rem;
+  /* 46px - 56px */
+  line-height: clamp(2.875rem, 8vw, 3.5rem);
+  text-decoration: none;
+  font-weight: 700;
+  min-width: 2.875rem;
+  margin: auto;
+  color: #1a1a1a;
+  padding: 0 2.5rem;
+  /* prevents padding and border from affecting height and width */
+  box-sizing: border-box;
+  background-color: #fff;
+  border: 2px solid #1a1a1a;
+  display: inline-block;
+  position: relative;
+  z-index: 1;
+  transition: color 0.3s;
+  border-radius: 10px;
+}
+.cs-button-5 .cs-button-text {
+  display: block;
+  /* we translate it up so it looks centered in the white space. The black :before element takes up space at the bottom and makes it looks off-center */
+  transform: translateY(-0.125rem);
+  transition: transform 0.3s;
+}
+.cs-button-5:before {
+  content: "";
+  width: 100%;
+  height: 0.375rem;
+  background: #ff6600;
+  opacity: 1;
+  position: absolute;
+  display: block;
+  bottom: 0;
+  left: 0;
+  transition: height 0.3s;
+  z-index: -1;
+}
+.cs-button-5:hover {
+  color: #fff;
+}
+.cs-button-5:hover .cs-button-text {
+  transform: translateY(0);
+}
+.cs-button-5:hover:before {
+  height: 100%;
+}
