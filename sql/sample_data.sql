@@ -160,7 +160,7 @@ VALUES
   (24, 19, 3, 20, '1 min');
 
 
-/* Sample query to recieve the workout_id and workout_name based on parameters */
+/* Sample query to receive the workout_id and workout_name based on parameters */
 /*
 SELECT (workout_id, workout_name) FROM Workouts
   WHERE workout_duration = '0-30' 
@@ -169,10 +169,8 @@ SELECT (workout_id, workout_name) FROM Workouts
   AND equipment_access = 'home';
 */
 
-/* Sample query to recieve the workout exercises based on parameters */
 
-
-
+/* Sample query to receive the workout exercises based on parameters */
 /*
 SELECT (exercise_name, Exercises.exercise_description, sets, repetitions, rest_time)
 FROM (
@@ -188,10 +186,18 @@ JOIN WorkoutExercises ON filtered_workout.workout_id = WorkoutExercises.workout_
 JOIN Exercises ON WorkoutExercises.exercise_id = Exercises.exercise_id;
 */
 
-/* Sample query to recieve the number of workouts */
 
+/* Sample query to receive the number of workouts */
 /*
 SELECT COUNT(*) FROM workouts;
 */
 
 
+/* Sample query to receive a workout based on workout id */
+/*
+SELECT exercise_name, Exercises.exercise_description, sets, repetitions, rest_time
+FROM Workouts
+JOIN WorkoutExercises ON Workouts.workout_id = WorkoutExercises.workout_id
+JOIN Exercises ON WorkoutExercises.exercise_id = Exercises.exercise_id
+WHERE Workouts.workout_id = 4;
+*/
