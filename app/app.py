@@ -2,6 +2,8 @@ from flask import Flask, render_template, request, jsonify, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
 import os
+import random
+import datetime
 from sqlalchemy import text, create_engine
 
 load_dotenv()  # This loads the variables from .env file
@@ -51,7 +53,8 @@ def index():
 
         print(name, email, phone, message)
 
-    return render_template('index.html')
+    year = datetime.date.today().year
+    return render_template('index.html', year=year)
 
 
 @app.route('/workout')
@@ -105,12 +108,46 @@ def get_strength_workouts():
     ).all()
 
     if len(workouts) != 0:
-        return 'workout found'
-        # return jsonify([{'workout_id': w.workout_id, 'workout_name': w.workout_name} for w in workouts])
-
+        workout_ids = [workout.workout_id for workout in workouts]
+        selected_workout_id = random.choice(workout_ids)
+        return redirect(url_for('display_workout', workout_id=selected_workout_id))
     else:
-        return 'No workout found'
-        # return jsonify({'No Workout found'})
+        return redirect(
+            url_for('ai_workout', duration=duration, fitness_level=fitness_level, fitness_goal=fitness_goal,
+                    equipment_access=equipment_access))
+
+
+
+@app.route('/display-workout/<int:workout_id>')
+def display_workout(workout_id):
+    workout_details = db.session.query(
+        Exercises.exercise_name,
+        Exercises.exercise_description,
+        WorkoutExercises.sets,
+        WorkoutExercises.repetitions,
+        WorkoutExercises.rest_time
+    ).join(WorkoutExercises, WorkoutExercises.exercise_id == Exercises.exercise_id) \
+     .join(Workout, Workout.workout_id == WorkoutExercises.workout_id) \
+     .filter(Workout.workout_id == workout_id) \
+     .all()
+
+    workout = Workout.query.with_entities(Workout.workout_name).filter(Workout.workout_id == workout_id).first()
+    workout_name = workout.workout_name
+    return render_template('workouts.html', workout_name=workout_name, exercises=workout_details)
+
+
+
+
+
+@app.route('/get_ai_workouts', methods=['GET', 'POST'])
+def ai_workout():
+
+    duration = request.args.get('duration')
+    fitness_level = request.args.get('fitness_level')
+    fitness_goal = request.args.get('fitness_goal')
+    equipment_access = request.args.get('equipment_access')
+
+    return render_template('no-workouts.html')
 
 
 @app.route('/run_workouts')
@@ -127,14 +164,12 @@ def get_run_workouts():
     ).all()
 
     if len(workouts) != 0:
-        return 'workout found'
-        # return jsonify([{'workout_id': w.workout_id, 'workout_name': w.workout_name} for w in workouts])
-
+        workout_ids = [workout.workout_id for workout in workouts]
+        selected_workout_id = random.choice(workout_ids)
+        return redirect(url_for('display_workout', workout_id=selected_workout_id))
     else:
-        return 'No workout found'
-        # return jsonify({'No Workout found'})
-
-
+        return redirect(
+            url_for('ai_workout', duration=duration, fitness_level=fitness_level, running_type=running_type))
 
 
 if __name__ == "__main__":
