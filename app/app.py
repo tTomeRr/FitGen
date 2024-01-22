@@ -1,11 +1,13 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, session
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
 import os
 import random
 import datetime
 import smtplib
-from email.mime.text import MIMEText
+import ast
+from openai import OpenAI
+
 
 load_dotenv()  # This loads the variables from .env file
 
@@ -14,6 +16,9 @@ app.secret_key = "Sachin"
 db_uri = f"postgresql://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@localhost/flex"
 app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
 db = SQLAlchemy(app)
+
+api_key = os.getenv('OPENAI_API_KEY')
+client = OpenAI(api_key=api_key)
 
 
 class Workout(db.Model):
@@ -130,18 +135,55 @@ def display_workout(workout_id):
         .join(Workout, Workout.workout_id == WorkoutExercises.workout_id) \
         .filter(Workout.workout_id == workout_id) \
         .all()
-
+    print(workout_details)
     workout = Workout.query.with_entities(Workout.workout_name).filter(Workout.workout_id == workout_id).first()
     workout_name = workout.workout_name
+    print(type(workout_details))
     return render_template('workouts.html', workout_name=workout_name, exercises=workout_details)
 
 
 @app.route('/get_ai_workouts', methods=['GET', 'POST'])
 def ai_workout():
-    duration = request.args.get('duration')
-    fitness_level = request.args.get('fitness_level')
-    fitness_goal = request.args.get('fitness_goal')
-    equipment_access = request.args.get('equipment_access')
+    if request.method == 'POST':
+        # Use request.form for POST request
+        duration = request.form.get('duration')
+        fitness_level = request.form.get('fitness_level')
+        fitness_goal = request.form.get('fitness_goal')
+        equipment_access = request.form.get('equipment_access')
+        running_type = request.form.get('running_type')
+    else:
+        # Use request.args for GET request
+        duration = request.args.get('duration')
+        fitness_level = request.args.get('fitness_level')
+        fitness_goal = request.args.get('fitness_goal')
+        equipment_access = request.args.get('equipment_access')
+        running_type = request.args.get('running_type')
+
+    if request.method == 'POST':
+        completion = client.chat.completions.create(
+            model="gpt-4",
+            messages=[
+                {
+                    "role": "system",
+                    "content": (
+                        f"Create a workout plan with only the workout name and details based on these criteria:\n"
+                        f"- Workout Duration: '{duration} minutes'\n- Fitness Level: '{fitness_level}'\n- "
+                        f"Fitness Goal: '{fitness_goal}'\n- Equipment Access: '{equipment_access}'\n- Running Type: '{running_type}'\n\n"
+                        "Format:\n{\n  'workout_name': 'Name of the workout',\n  "
+                        "'workout_details': [('Exercise Name', 'Description', Sets, Repetitions, 'Rest Time in minutes'), ...]\n}\n"
+                        "Note: Provide the response in this exact format, without any additional text.\n"
+                        "Provide a workout name that reflects the workout's focus and goal, e.g., 'Intense Cardio Circuit' or 'Beginners Full-Body Strength. with no punctuation marks"
+                    )
+                }
+            ]
+        )
+
+        output = completion.choices[0].message.content
+        output = output.replace("'", '"')
+        workout_dict = ast.literal_eval(output)
+        session['workout_name'] = workout_dict["workout_name"]
+        session['workout_details'] = workout_dict["workout_details"]
+        return redirect(url_for('display_ai_workout'))
 
     return render_template('no-workouts.html')
 
@@ -193,6 +235,20 @@ def send_mail(name, email, phone, message):
         flash(f'Something went wrong')
 
     return redirect(url_for('index'))
+
+@app.route('/display-ai-workout')
+def display_ai_workout():
+    workout_name = session.get('workout_name', 'Default Workout')
+    workout_details_tuples = session.get('workout_details', [])
+    workout_details = [
+        {'exercise_name': detail[0], 'exercise_description': detail[1],
+         'sets': detail[2], 'repetitions': detail[3], 'rest_time': detail[4]}
+        for detail in workout_details_tuples
+    ]
+    return render_template('workouts.html', workout_name=workout_name, exercises=workout_details)
+
+
+
 
 if __name__ == "__main__":
     app.run()

@@ -21,13 +21,27 @@
       <div class="cs-container">
           <div class="cs-content">
               <div class="cs-flex">
-                  <span class="cs-topper">OH NO! We couldnt find a workout for you....</span>
+                  <span class="cs-topper">OH NO! We couldn't find a workout for you....</span>
                   <h2 class="cs-title">Do you want us to build you a workout using AI?</h2>
               </div>
               <div class="cs-button-box">
-                  <a href="{{ url_for('ai_workouts') }}" class="cs-button-solid">Generate now</a>
-                  <a href="{{ url_for('workout') }}" class="cs-button-transparent">Go back</a>
-              </div>
+    <!-- Begin form -->
+    <form action="{{ url_for('ai_workout') }}" method="post">
+    <!-- Hidden fields to retain the parameters -->
+    <input type="hidden" name="duration" value="{{ request.args.get('duration') }}">
+    <input type="hidden" name="fitness_level" value="{{ request.args.get('fitness_level') }}">
+    <input type="hidden" name="fitness_goal" value="{{ request.args.get('fitness_goal') }}">
+    <input type="hidden" name="equipment_access" value="{{ request.args.get('equipment_access') }}">
+    <input type="hidden" name="running_type" value="{{ request.args.get('running_type') }}">
+
+    <!-- Submit button -->
+    <button type="submit" class="cs-button-solid">Generate now</button>
+</form>
+
+    <!-- Link to go back -->
+    <a href="{{ url_for('workout') }}" class="cs-button-transparent">Go back</a>
+</div>
+
           </div>
       </div>
       <picture class="cs-background">
