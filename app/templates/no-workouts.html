@@ -6,7 +6,8 @@
     <title>FLEX</title>
     <link rel="stylesheet" type="text/css" href="../static/css/core.css" />
     <link rel="stylesheet" type="text/css" href="../static/css/styles.css" />
-    <link rel="stylesheet" type="text/css" href="../static/css/table.css" />
+    <link rel="stylesheet" type="text/css" href="../static/css/ai.css" />
+    
     
     <link
       rel="stylesheet"
@@ -14,47 +15,29 @@
     />
   </head>
   <body>
+
     <div class="bg"></div>
-    
-    <h2> We Could find you a Workout... But we can generate it for you using AI.</h2>
-    <a href="{{ url_for('workout') }}" class="cs-button-5" aria-label="read more about us">
-      <span class="cs-button-text">Generate a workout</span>
-    </a
-
-    <div class="container">
-        <h2>Workout Name</h2>
-        <ul class="responsive-table">
-          <li class="table-header">
-            <div class="col col-1">#</div>
-            <div class="col col-2">Exercise</div>
-            <div class="col col-3">Sets</div>
-            <div class="col col-4">Repetitions</div>
-            <div class="col col-5">Rest time</div>
-            <div class="col col-6">Exercise description</div>
-          </li>
-          <li class="table-row">
-            <div class="col col-1" data-label="Job Id">1</div>
-            <div class="col col-2" data-label="Customer Name">Pushups</div>
-            <div class="col col-3" data-label="Amount">3</div>
-            <div class="col col-4" data-label="Payment Status">5</div>
-            <div class="col col-5" data-label="Amount">1.5 Minutes</div>
-            <div class="col col-6" data-label="Payment Status">Pending</div>
-          </li>
-         
-        </ul>
-
-        <a href="{{ url_for('workout') }}" class="cs-button-5" aria-label="read more about us">
-            <span class="cs-button-text">Go Back</span>
-        </a>
-        
+    <section id="cta-1071">
+      <div class="cs-container">
+          <div class="cs-content">
+              <div class="cs-flex">
+                  <span class="cs-topper">OH NO! We couldnt find a workout for you....</span>
+                  <h2 class="cs-title">Do you want us to build you a workout using AI?</h2>
+              </div>
+              <div class="cs-button-box">
+                  <a href="{{ url_for('ai_workouts') }}" class="cs-button-solid">Generate now</a>
+                  <a href="{{ url_for('workout') }}" class="cs-button-transparent">Go back</a>
+              </div>
+          </div>
       </div>
+      <picture class="cs-background">
+          <!--Mobile Image-->
+          <source media="(max-width: 600px)" srcset="../static/images/robot.png">
+          <!--Tablet and above Image-->
+          <source media="(min-width: 601px)" srcset="../static/images/robot.png">
+          <img loading="lazy" decoding="async" src="../static/images/robot.png" alt="mechanic" width="1280" height="568">
+      </picture>
+    </section>
 
-  
-                        
-                        
-    
-  
-  
-    
   </body>
 </html>
