@@ -1,14 +1,16 @@
-from flask import Flask, render_template, request, jsonify, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
 import os
 import random
 import datetime
-from sqlalchemy import text, create_engine
+import smtplib
+from email.mime.text import MIMEText
 
 load_dotenv()  # This loads the variables from .env file
 
 app = Flask(__name__)
+app.secret_key = "Sachin"
 db_uri = f"postgresql://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@localhost/flex"
 app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
 db = SQLAlchemy(app)
@@ -50,8 +52,7 @@ def index():
         email = request.form['email']
         phone = request.form['phone']
         message = request.form['Message']
-
-        print(name, email, phone, message)
+        send_mail(name, email, phone, message)
 
     year = datetime.date.today().year
     return render_template('index.html', year=year)
@@ -117,7 +118,6 @@ def get_strength_workouts():
                     equipment_access=equipment_access))
 
 
-
 @app.route('/display-workout/<int:workout_id>')
 def display_workout(workout_id):
     workout_details = db.session.query(
@@ -127,21 +127,17 @@ def display_workout(workout_id):
         WorkoutExercises.repetitions,
         WorkoutExercises.rest_time
     ).join(WorkoutExercises, WorkoutExercises.exercise_id == Exercises.exercise_id) \
-     .join(Workout, Workout.workout_id == WorkoutExercises.workout_id) \
-     .filter(Workout.workout_id == workout_id) \
-     .all()
+        .join(Workout, Workout.workout_id == WorkoutExercises.workout_id) \
+        .filter(Workout.workout_id == workout_id) \
+        .all()
 
     workout = Workout.query.with_entities(Workout.workout_name).filter(Workout.workout_id == workout_id).first()
     workout_name = workout.workout_name
     return render_template('workouts.html', workout_name=workout_name, exercises=workout_details)
 
 
-
-
-
 @app.route('/get_ai_workouts', methods=['GET', 'POST'])
 def ai_workout():
-
     duration = request.args.get('duration')
     fitness_level = request.args.get('fitness_level')
     fitness_goal = request.args.get('fitness_goal')
@@ -171,6 +167,32 @@ def get_run_workouts():
         return redirect(
             url_for('ai_workout', duration=duration, fitness_level=fitness_level, running_type=running_type))
 
+
+def send_mail(name, email, phone, message):
+    gmail_user = os.getenv('GMAIL_USERNAME')
+    gmail_password = os.getenv('GMAIL_PASSWORD')
+
+    sent_from = gmail_user
+    to = [gmail_user]
+    subject = f'Message from: Name- {name} Email- {email}, Phone- {phone}'
+    body = message
+
+    email_text = f"""From: {sent_from}\nTo: {", ".join(to)}\nSubject: {subject}\n\n{body}"""
+
+    try:
+        server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+        server.ehlo()
+        server.login(gmail_user, gmail_password)
+        server.sendmail(sent_from, to, email_text)
+        server.close()
+
+        flash("Thanks for reaching us. Your message has been sent!")
+
+
+    except Exception as e:
+        flash(f'Something went wrong')
+
+    return redirect(url_for('index'))
 
 if __name__ == "__main__":
     app.run()
