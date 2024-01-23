@@ -249,7 +249,5 @@ def display_ai_workout():
     return render_template('workouts.html', workout_name=workout_name, exercises=workout_details)
 
 
-
-
 if __name__ == "__main__":
     app.run()
