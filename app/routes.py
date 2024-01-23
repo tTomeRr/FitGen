@@ -1,56 +1,18 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session
-from flask_sqlalchemy import SQLAlchemy
-from dotenv import load_dotenv
-import os
+from flask import render_template, request, redirect, url_for, session, Blueprint
 import random
 import datetime
-import smtplib
 import ast
+from .utils import send_mail
+from .models import Workout, Exercises, WorkoutExercises, db
 from openai import OpenAI
+import os
 
-
-load_dotenv()  # This loads the variables from .env file
-
-app = Flask(__name__)
-app.secret_key = "Sachin"
-db_uri = f"postgresql://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@localhost:5433/flex"
-app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
-db = SQLAlchemy(app)
+main = Blueprint('main', __name__)
 
 api_key = os.getenv('OPENAI_API_KEY')
 client = OpenAI(api_key=api_key)
 
-
-class Workout(db.Model):
-    __tablename__ = 'workouts'
-    workout_id = db.Column(db.Integer, primary_key=True)
-    workout_name = db.Column(db.String)
-    workout_type = db.Column(db.String)
-    workout_duration = db.Column(db.String)
-    fitness_level = db.Column(db.String)
-    fitness_goal = db.Column(db.String)
-    equipment_access = db.Column(db.String)
-    running_type = db.Column(db.String)
-
-
-class Exercises(db.Model):
-    __tablename__ = 'exercises'
-    exercise_id = db.Column(db.Integer, primary_key=True)
-    exercise_name = db.Column(db.String)
-    exercise_type = db.Column(db.String)
-    exercise_description = db.Column(db.String)
-
-
-class WorkoutExercises(db.Model):
-    __tablename__ = 'workoutexercises'
-    workout_id = db.Column(db.Integer, db.ForeignKey('Workouts.workout_id'), primary_key=True)
-    exercise_id = db.Column(db.Integer, db.ForeignKey('Exercises.exercise_id'), primary_key=True)
-    sets = db.Column(db.Integer)
-    repetitions = db.Column(db.String(20))
-    rest_time = db.Column(db.String(20))
-
-
-@app.route('/', methods=['GET', 'POST'])
+@main.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
         name = request.form['name']
@@ -63,24 +25,25 @@ def index():
     return render_template('index.html', year=year)
 
 
-@app.route('/workout')
+@main.route('/workout')
 def workout():
     return render_template('workout.html')
 
 
-@app.route('/workout/run', methods=['GET', 'POST'])
+@main.route('/workout/run', methods=['GET', 'POST'])
 def run():
     if request.method == 'POST':
         duration = request.form['workout-duration']
         level = request.form['fitness-level']
         running_type = request.form['running-type']
         print(duration, level, running_type)
-        return redirect(url_for('get_run_workouts', duration=duration, fitness_level=level, running_type=running_type))
+        return redirect(
+            url_for('main.get_run_workouts', duration=duration, fitness_level=level, running_type=running_type))
 
     return render_template('run.html')
 
 
-@app.route('/workout/strength', methods=['GET', 'POST'])
+@main.route('/workout/strength', methods=['GET', 'POST'])
 def strength():
     if request.method == 'POST':
         duration = request.form['workout-duration']
@@ -88,18 +51,18 @@ def strength():
         goal = request.form['fitness-goal']
         equipment = request.form['equipment-access']
         print(duration, level, goal, equipment)
-        return redirect(url_for('get_strength_workouts', duration=duration, fitness_level=level, fitness_goal=goal,
+        return redirect(url_for('main.get_strength_workouts', duration=duration, fitness_level=level, fitness_goal=goal,
                                 equipment_access=equipment))
 
     return render_template('strength.html')
 
 
-@app.errorhandler(404)
+@main.errorhandler(404)
 def page_not_found(e):
     return render_template('error.html'), 404
 
 
-@app.route('/strength_workouts')
+@main.route('/strength_workouts')
 def get_strength_workouts():
     duration = request.args.get('duration')
     fitness_level = request.args.get('fitness_level')
@@ -116,14 +79,14 @@ def get_strength_workouts():
     if len(workouts) != 0:
         workout_ids = [workout.workout_id for workout in workouts]
         selected_workout_id = random.choice(workout_ids)
-        return redirect(url_for('display_workout', workout_id=selected_workout_id))
+        return redirect(url_for('main.display_workout', workout_id=selected_workout_id))
     else:
         return redirect(
-            url_for('ai_workout', duration=duration, fitness_level=fitness_level, fitness_goal=fitness_goal,
+            url_for('main.ai_workout', duration=duration, fitness_level=fitness_level, fitness_goal=fitness_goal,
                     equipment_access=equipment_access))
 
 
-@app.route('/display-workout/<int:workout_id>')
+@main.route('/display-workout/<int:workout_id>')
 def display_workout(workout_id):
     workout_details = db.session.query(
         Exercises.exercise_name,
@@ -142,7 +105,7 @@ def display_workout(workout_id):
     return render_template('workouts.html', workout_name=workout_name, exercises=workout_details)
 
 
-@app.route('/get_ai_workouts', methods=['GET', 'POST'])
+@main.route('/get_ai_workouts', methods=['GET', 'POST'])
 def ai_workout():
     if request.method == 'POST':
         # Use request.form for POST request
@@ -179,16 +142,22 @@ def ai_workout():
         )
 
         output = completion.choices[0].message.content
-        output = output.replace("'", '"')
-        workout_dict = ast.literal_eval(output)
-        session['workout_name'] = workout_dict["workout_name"]
-        session['workout_details'] = workout_dict["workout_details"]
-        return redirect(url_for('display_ai_workout'))
+
+        try:
+            output = output.replace("'", '"')
+            workout_dict = ast.literal_eval(output)
+            session['workout_name'] = workout_dict["workout_name"]
+            session['workout_details'] = workout_dict["workout_details"]
+            return redirect(url_for('main.display_ai_workout'))
+        except ValueError as e:
+            print("Error parsing the output:", e)
+            # Handle the error, maybe return an error message to the user
+            return render_template('error_parsing_output.html')
 
     return render_template('no-workouts.html')
 
 
-@app.route('/run_workouts')
+@main.route('/run_workouts')
 def get_run_workouts():
     duration = request.args.get('duration')
     fitness_level = request.args.get('fitness_level')
@@ -204,40 +173,13 @@ def get_run_workouts():
     if len(workouts) != 0:
         workout_ids = [workout.workout_id for workout in workouts]
         selected_workout_id = random.choice(workout_ids)
-        return redirect(url_for('display_workout', workout_id=selected_workout_id))
+        return redirect(url_for('main.display_workout', workout_id=selected_workout_id))
     else:
         return redirect(
-            url_for('ai_workout', duration=duration, fitness_level=fitness_level, running_type=running_type))
+            url_for('main.ai_workout', duration=duration, fitness_level=fitness_level, running_type=running_type))
 
 
-def send_mail(name, email, phone, message):
-    gmail_user = os.getenv('GMAIL_USERNAME')
-    gmail_password = os.getenv('GMAIL_PASSWORD')
-
-    sent_from = gmail_user
-    to = [gmail_user]
-    subject = f'Message from: Name- {name} Email- {email}, Phone- {phone}'
-    body = message
-
-    email_text = f"""From: {sent_from}\nTo: {", ".join(to)}\nSubject: {subject}\n\n{body}"""
-
-    try:
-        server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
-        server.ehlo()
-        server.login(gmail_user, gmail_password)
-        server.sendmail(sent_from, to, email_text)
-        server.close()
-
-        flash("Thanks for reaching us. Your message has been sent!")
-
-
-    except Exception as e:
-        flash(f'Something went wrong')
-        print(e)
-
-    return redirect(url_for('index'))
-
-@app.route('/display-ai-workout')
+@main.route('/display-ai-workout')
 def display_ai_workout():
     workout_name = session.get('workout_name', 'Default Workout')
     workout_details_tuples = session.get('workout_details', [])
@@ -247,7 +189,3 @@ def display_ai_workout():
         for detail in workout_details_tuples
     ]
     return render_template('workouts.html', workout_name=workout_name, exercises=workout_details)
-
-
-if __name__ == "__main__":
-    app.run()

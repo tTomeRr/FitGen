@@ -26,7 +26,7 @@
             <span class="cs-topper">Step 1</span>
             <h2 class="cs-title">Choose Your Workout</h2>
             <a
-              href="{{ url_for('index') }}"
+              href="{{ url_for('main.index') }}"
               class="cs-button-6"
               aria-label="read more about us"
             >
@@ -54,7 +54,7 @@
         <!--Gallery-->
         <div class="cs-gallery">
           <!--Picture 1-->
-          <a href="{{ url_for('run') }}">
+          <a href="{{ url_for('main.run') }}">
             <picture class="cs-image">
               <source
                 media="(max-width: 600px)"
@@ -75,7 +75,7 @@
             </picture>
           </a>
           <!--Picture 2-->
-          <a href="{{ url_for('strength') }}">
+          <a href="{{ url_for('main.strength') }}">
             <picture class="cs-image">
               <source
                 media="(max-width: 600px)"

@@ -26,7 +26,7 @@
               </div>
               <div class="cs-button-box">
     <!-- Begin form -->
-    <form action="{{ url_for('ai_workout') }}" method="post">
+    <form action="{{ url_for('main.ai_workout') }}" method="post">
     <!-- Hidden fields to retain the parameters -->
     <input type="hidden" name="duration" value="{{ request.args.get('duration') }}">
     <input type="hidden" name="fitness_level" value="{{ request.args.get('fitness_level') }}">
@@ -39,7 +39,7 @@
 </form>
 
     <!-- Link to go back -->
-    <a href="{{ url_for('workout') }}" class="cs-button-transparent">Go back</a>
+    <a href="{{ url_for('main.workout') }}" class="cs-button-transparent">Go back</a>
 </div>
 
           </div>
