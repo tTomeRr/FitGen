@@ -93,6 +93,8 @@
       text-align: center;
     }
   }
+
+
   
 
   .cs-button-5 {
@@ -144,4 +146,28 @@
     height: 100%;
 }
 
-                                
+#loadingGif {
+    position: absolute !important;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+    display: none;
+    /*margin:auto;*/
+}
+
+.overlay {
+    position: absolute;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+    margin:auto;
+    background-color: rgba(0,0,0,0.5); /* Semi-transparent black background */
+    z-index: 999; /* Just below the GIF */
+    display: none; /* Hidden by default */
+}
+
+         .gif{
+             /*display: none;*/
+         }

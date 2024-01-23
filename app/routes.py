@@ -1,16 +1,11 @@
 from flask import render_template, request, redirect, url_for, session, Blueprint
 import random
 import datetime
-import ast
-from .utils import send_mail
+from .utils import send_mail, generate_ai_workout
 from .models import Workout, Exercises, WorkoutExercises, db
-from openai import OpenAI
-import os
 
 main = Blueprint('main', __name__)
 
-api_key = os.getenv('OPENAI_API_KEY')
-client = OpenAI(api_key=api_key)
 
 @main.route('/', methods=['GET', 'POST'])
 def index():
@@ -123,36 +118,17 @@ def ai_workout():
         running_type = request.args.get('running_type')
 
     if request.method == 'POST':
-        completion = client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {
-                    "role": "system",
-                    "content": (
-                        f"Create a workout plan with only the workout name and details based on these criteria:\n"
-                        f"- Workout Duration: '{duration} minutes'\n- Fitness Level: '{fitness_level}'\n- "
-                        f"Fitness Goal: '{fitness_goal}'\n- Equipment Access: '{equipment_access}'\n- Running Type: '{running_type}'\n\n"
-                        "Format:\n{\n  'workout_name': 'Name of the workout',\n  "
-                        "'workout_details': [('Exercise Name', 'Description', Sets, Repetitions, 'Rest Time in minutes'), ...]\n}\n"
-                        "Note: Provide the response in this exact format, without any additional text.\n"
-                        "Provide a workout name that reflects the workout's focus and goal, e.g., 'Intense Cardio Circuit' or 'Beginners Full-Body Strength. with no punctuation marks"
-                    )
-                }
-            ]
-        )
 
-        output = completion.choices[0].message.content
+        workout_output = generate_ai_workout(duration, fitness_level, fitness_goal, equipment_access, running_type)
 
         try:
-            output = output.replace("'", '"')
-            workout_dict = ast.literal_eval(output)
-            session['workout_name'] = workout_dict["workout_name"]
-            session['workout_details'] = workout_dict["workout_details"]
+            session['workout_name'] = workout_output["workout_name"]
+            session['workout_details'] = workout_output["workout_details"]
             return redirect(url_for('main.display_ai_workout'))
+
         except ValueError as e:
             print("Error parsing the output:", e)
             # Handle the error, maybe return an error message to the user
-            return render_template('error_parsing_output.html')
 
     return render_template('no-workouts.html')
 

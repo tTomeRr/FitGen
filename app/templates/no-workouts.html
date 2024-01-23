@@ -17,8 +17,13 @@
   <body>
 
     <div class="bg"></div>
+    <div class="overlay" id="overlay"></div>
+
+
     <section id="cta-1071">
       <div class="cs-container">
+              <img  src="../static/images/404error.gif" id="loadingGif" style="display: none; position: absolute; top: 150px; z-index: 3"   alt="Loading...">
+
           <div class="cs-content">
               <div class="cs-flex">
                   <span class="cs-topper">OH NO! We couldn't find a workout for you....</span>
@@ -36,6 +41,7 @@
 
     <!-- Submit button -->
     <button type="submit" class="cs-button-solid">Generate now</button>
+
 </form>
 
     <!-- Link to go back -->
@@ -52,6 +58,23 @@
           <img loading="lazy" decoding="async" src="../static/images/robot.png" alt="mechanic" width="1280" height="568">
       </picture>
     </section>
+
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+    var form = document.querySelector('form');
+    var loadingGif = document.getElementById('loadingGif');
+    var overlay = document.getElementById('overlay');
+
+    form.addEventListener('submit', function() {
+        // Show the loading GIF and the overlay
+        loadingGif.style.display = 'block';
+        overlay.style.display = 'block';
+    });
+});
+
+        </script>
+
+
 
   </body>
 </html>
