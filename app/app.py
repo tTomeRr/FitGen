@@ -13,7 +13,7 @@ load_dotenv()  # This loads the variables from .env file
 
 app = Flask(__name__)
 app.secret_key = "Sachin"
-db_uri = f"postgresql://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@localhost/flex"
+db_uri = f"postgresql://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@localhost:5433/flex"
 app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
 db = SQLAlchemy(app)
 
@@ -233,6 +233,7 @@ def send_mail(name, email, phone, message):
 
     except Exception as e:
         flash(f'Something went wrong')
+        print(e)
 
     return redirect(url_for('index'))
 
