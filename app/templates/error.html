@@ -22,8 +22,8 @@
                 <img src="../static/images/404error.gif" alt="Error animation" width="700px",>
             </div>
           
-          <h1> 404 Error.</h1>
-          <p> We can't find the page you're looking for.</p>
+          <h1> {{error_code}} Error.</h1>
+          <p> {{error_message}}</p>
           <a href="{{ url_for('main.index') }}" class="cs-button-5" aria-label="read more about us">
             <span class="cs-button-text">Go Back</span>
         </a>

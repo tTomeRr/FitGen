@@ -1,7 +1,7 @@
 from flask import render_template, request, redirect, url_for, session, Blueprint
 import random
 import datetime
-from .utils import send_mail, generate_ai_workout
+from .utils import send_mail, generate_ai_workout, get_number_of_workouts, get_number_of_exercises
 from .models import Workout, Exercises, WorkoutExercises, db
 
 main = Blueprint('main', __name__)
@@ -17,7 +17,11 @@ def index():
         send_mail(name, email, phone, message)
 
     year = datetime.date.today().year
-    return render_template('index.html', year=year)
+    exercises_count = get_number_of_exercises()
+    workouts_count = get_number_of_workouts()
+    print(workouts_count)
+
+    return render_template('index.html', year=year, exercises_count=exercises_count, workouts_count=workouts_count)
 
 
 @main.route('/workout')
@@ -51,12 +55,6 @@ def strength():
 
     return render_template('strength.html')
 
-
-@main.errorhandler(404)
-def page_not_found(e):
-    return render_template('error.html'), 404
-
-
 @main.route('/strength_workouts')
 def get_strength_workouts():
     duration = request.args.get('duration')
@@ -84,6 +82,7 @@ def get_strength_workouts():
 @main.route('/display-workout/<int:workout_id>')
 def display_workout(workout_id):
     workout_details = db.session.query(
+        Workout.workout_name,
         Exercises.exercise_name,
         Exercises.exercise_description,
         WorkoutExercises.sets,
@@ -93,24 +92,22 @@ def display_workout(workout_id):
         .join(Workout, Workout.workout_id == WorkoutExercises.workout_id) \
         .filter(Workout.workout_id == workout_id) \
         .all()
-    print(workout_details)
-    workout = Workout.query.with_entities(Workout.workout_name).filter(Workout.workout_id == workout_id).first()
-    workout_name = workout.workout_name
-    print(type(workout_details))
+
+    workout_name = workout_details[0].workout_name
+
     return render_template('workouts.html', workout_name=workout_name, exercises=workout_details)
 
 
 @main.route('/get_ai_workouts', methods=['GET', 'POST'])
 def ai_workout():
     if request.method == 'POST':
-        # Use request.form for POST request
         duration = request.form.get('duration')
         fitness_level = request.form.get('fitness_level')
         fitness_goal = request.form.get('fitness_goal')
         equipment_access = request.form.get('equipment_access')
         running_type = request.form.get('running_type')
+
     else:
-        # Use request.args for GET request
         duration = request.args.get('duration')
         fitness_level = request.args.get('fitness_level')
         fitness_goal = request.args.get('fitness_goal')
@@ -128,7 +125,6 @@ def ai_workout():
 
         except ValueError as e:
             print("Error parsing the output:", e)
-            # Handle the error, maybe return an error message to the user
 
     return render_template('no-workouts.html')
 
@@ -165,3 +161,19 @@ def display_ai_workout():
         for detail in workout_details_tuples
     ]
     return render_template('workouts.html', workout_name=workout_name, exercises=workout_details)
+
+
+@main.errorhandler(404)
+def page_not_found(e):
+
+    error_code = 404
+    error_message = "We can't find the page you're looking for."
+    return render_template('error.html', error_code=error_code, error_message=error_message), 404
+
+
+@main.errorhandler(500)
+def service_unavailable(e):
+
+    error_code = 500
+    error_message = "Internal Server error - It's not you, it's us"
+    return render_template('error.html', error_code=error_code, error_message=error_message), 404

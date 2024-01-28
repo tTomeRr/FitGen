@@ -603,5 +603,9 @@ body {
   cursor: pointer;
 }
 
-
+.text {
+        color: var(--primary);
+        font-size: clamp(1.6rem, 3.2vw, 2.4rem);
+        font-family: 'Bungee Spice', sans-serif;
+    }
 

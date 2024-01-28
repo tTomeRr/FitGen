@@ -3,6 +3,8 @@ import os
 import smtplib
 from openai import OpenAI
 import ast
+from .models import Workout, Exercises, WorkoutExercises, db
+
 
 def send_mail(name, email, phone, message):
     gmail_user = os.getenv('GMAIL_USERNAME')
@@ -11,9 +13,8 @@ def send_mail(name, email, phone, message):
     sent_from = gmail_user
     to = [gmail_user]
     subject = f'Message from: Name- {name} Email- {email}, Phone- {phone}'
-    body = message
 
-    email_text = f"""From: {sent_from}\nTo: {", ".join(to)}\nSubject: {subject}\n\n{body}"""
+    email_text = f"""From: {sent_from}\nTo: {", ".join(to)}\nSubject: {subject}\n\n{message}"""
 
     try:
         server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
@@ -21,18 +22,16 @@ def send_mail(name, email, phone, message):
         server.login(gmail_user, gmail_password)
         server.sendmail(sent_from, to, email_text)
         server.close()
-
         flash("Thanks for reaching us. Your message has been sent!")
-
+        return 'Success'
 
     except Exception as e:
-        flash(f'Something went wrong')
+        flash(f'Something went wrong. Message not send.')
         print(e)
+        return 'Failure'
 
-    return redirect(url_for('main.index'))
 
 def generate_ai_workout(duration, fitness_level, fitness_goal, equipment_access, running_type):
-
     api_key = os.getenv('OPENAI_API_KEY')
     client = OpenAI(api_key=api_key)
 
@@ -58,3 +57,11 @@ def generate_ai_workout(duration, fitness_level, fitness_goal, equipment_access,
     workout_output = workout_output.replace("'", '"')
 
     return ast.literal_eval(workout_output)
+
+
+def get_number_of_workouts():
+    return db.session.query(Workout).count() // 10 * 10
+
+
+def get_number_of_exercises():
+    return db.session.query(Exercises).count() // 10 * 10

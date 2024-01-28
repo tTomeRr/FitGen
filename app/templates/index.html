@@ -9,7 +9,12 @@
     <link
             rel="stylesheet"
             href="https://fonts.googleapis.com/css?family=Roboto&display=swap"
+
     />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bungee+Spice&display=swap" rel="stylesheet">
 </head>
 <body>
 <div class="bg"></div>
@@ -22,10 +27,11 @@
     <div class="cs-container">
         <h1 class="cs-title">FLEX</h1>
         <p class="cs-text">
-            Transform your fitness routine with our innovative workout generator,
-            crafting personalized exercise plans tailored to your goals and
-            preferences.
-        </p>
+    With more than <span class="text">{{ workouts_count }}+</span> workouts and over <span class="text">{{ exercises_count }}+</span> unique exercises,
+    Flex will help you create your ideal workout routine.
+    Simply input your workout preferences,
+    and we'll handle the rest. So, what are you waiting for?
+</p>
         <a href="{{ url_for('main.workout') }}" class="cs-button-solid">Start Now</a>
     </div>
 
