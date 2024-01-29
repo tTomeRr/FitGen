@@ -1,4 +1,4 @@
-CREATE TABLE Workouts (
+CREATE TABLE workouts (
   workout_id SERIAL PRIMARY KEY,
   workout_name VARCHAR(50),
   workout_type VARCHAR(50),
@@ -9,14 +9,14 @@ CREATE TABLE Workouts (
   running_type VARCHAR(20)
 );
 
-CREATE TABLE Exercises (
+CREATE TABLE exercises (
   exercise_id SERIAL PRIMARY KEY,
   exercise_name VARCHAR(50),
   exercise_type VARCHAR(50),
   exercise_description VARCHAR(100)
 );
 
-CREATE TABLE WorkoutExercises (
+CREATE TABLE workoutexercises (
   workout_id INT,
   exercise_id INT,
   sets INT,

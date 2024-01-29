@@ -13,9 +13,12 @@ def create_app():
 
     app.secret_key = os.getenv('APP_SECRET_KEY')
 
-    db_user = os.getenv('DB_USER')
-    db_password = os.getenv('DB_PASSWORD')
-    db_uri = f"postgresql://{db_user}:{db_password}@localhost/flex"
+    db_user = os.getenv('POSTGRES_USER')
+    db_password = os.getenv('POSTGRES_PASSWORD')
+    db_host = os.getenv('POSTGRES_HOST')
+    db_port = "5433"
+    db_name = os.getenv('POSTGRES_DB')
+    db_uri = f"postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
     app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
 
     db.init_app(app)

@@ -22,11 +22,11 @@ def test_database_retrieval(client):
 
     sql_statement = \
         """
-            SELECT exercise_name, Exercises.exercise_description, sets, repetitions, rest_time
-            FROM Workouts
-            JOIN WorkoutExercises ON Workouts.workout_id = WorkoutExercises.workout_id
-            JOIN Exercises ON WorkoutExercises.exercise_id = Exercises.exercise_id
-            WHERE Workouts.workout_id = 4;
+            SELECT exercise_name, exercises.exercise_description, sets, repetitions, rest_time
+            FROM workouts
+            JOIN workoutexercises ON workouts.workout_id = workoutexercises.workout_id
+            JOIN exercises ON workoutexercises.exercise_id = exercises.exercise_id
+            WHERE workouts.workout_id = 4;
         """
 
     with client.application.app_context():
