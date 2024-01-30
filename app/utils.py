@@ -4,6 +4,7 @@ import smtplib
 from openai import OpenAI
 import ast
 from .models import Workout, Exercises, WorkoutExercises, db
+import random
 
 
 def send_mail(name, email, phone, message):
@@ -65,3 +66,40 @@ def get_number_of_workouts():
 
 def get_number_of_exercises():
     return db.session.query(Exercises).count() // 10 * 10
+
+
+def get_workout_from_db(workout_type, duration, fitness_level, fitness_goal=None, equipment_access=None,
+                        running_type=None):
+    workouts = Workout.query.filter(
+        Workout.workout_type == workout_type,
+        Workout.workout_duration == duration,
+        Workout.fitness_level == fitness_level,
+        Workout.fitness_goal == fitness_goal,
+        Workout.equipment_access == equipment_access,
+        Workout.running_type == running_type
+    ).all()
+
+    print(workouts)
+    print(workout_type, duration, fitness_level, fitness_goal, equipment_access, running_type)
+    return workouts
+
+
+def get_workout_id(workouts):
+    workout_ids = [workout.workout_id for workout in workouts]
+    selected_workout_id = random.choice(workout_ids)
+    return selected_workout_id
+
+
+def get_workout_by_id(workout_id):
+    workout_details = db.session.query(
+        Workout.workout_name,
+        Exercises.exercise_name,
+        Exercises.exercise_description,
+        WorkoutExercises.sets,
+        WorkoutExercises.repetitions,
+        WorkoutExercises.rest_time
+    ).join(WorkoutExercises, WorkoutExercises.exercise_id == Exercises.exercise_id) \
+        .join(Workout, Workout.workout_id == WorkoutExercises.workout_id) \
+        .filter(Workout.workout_id == workout_id) \
+        .all()
+    return workout_details

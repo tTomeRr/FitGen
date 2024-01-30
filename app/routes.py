@@ -1,7 +1,8 @@
 from flask import render_template, request, redirect, url_for, session, Blueprint
 import random
 import datetime
-from .utils import send_mail, generate_ai_workout, get_number_of_workouts, get_number_of_exercises
+from .utils import send_mail, generate_ai_workout, get_number_of_workouts, \
+    get_number_of_exercises, get_workout_from_db, get_workout_id, get_workout_by_id
 from .models import Workout, Exercises, WorkoutExercises, db
 
 main = Blueprint('main', __name__)
@@ -57,22 +58,18 @@ def strength():
 
 @main.route('/strength_workouts')
 def get_strength_workouts():
+    workout_type = "strength"
     duration = request.args.get('duration')
     fitness_level = request.args.get('fitness_level')
     fitness_goal = request.args.get('fitness_goal')
     equipment_access = request.args.get('equipment_access')
 
-    workouts = Workout.query.filter(
-        Workout.workout_duration == duration,
-        Workout.fitness_level == fitness_level,
-        Workout.fitness_goal == fitness_goal,
-        Workout.equipment_access == equipment_access
-    ).all()
+    workouts = get_workout_from_db(workout_type=workout_type, duration=duration, fitness_level=fitness_level,
+                                   fitness_goal=fitness_goal, equipment_access=equipment_access)
 
     if len(workouts) != 0:
-        workout_ids = [workout.workout_id for workout in workouts]
-        selected_workout_id = random.choice(workout_ids)
-        return redirect(url_for('main.display_workout', workout_id=selected_workout_id))
+        workout_id = get_workout_id(workouts)
+        return redirect(url_for('main.display_workout', workout_id=workout_id))
     else:
         return redirect(
             url_for('main.ai_workout', duration=duration, fitness_level=fitness_level, fitness_goal=fitness_goal,
@@ -81,17 +78,7 @@ def get_strength_workouts():
 
 @main.route('/display-workout/<int:workout_id>')
 def display_workout(workout_id):
-    workout_details = db.session.query(
-        Workout.workout_name,
-        Exercises.exercise_name,
-        Exercises.exercise_description,
-        WorkoutExercises.sets,
-        WorkoutExercises.repetitions,
-        WorkoutExercises.rest_time
-    ).join(WorkoutExercises, WorkoutExercises.exercise_id == Exercises.exercise_id) \
-        .join(Workout, Workout.workout_id == WorkoutExercises.workout_id) \
-        .filter(Workout.workout_id == workout_id) \
-        .all()
+    workout_details = get_workout_by_id(workout_id)
 
     workout_name = workout_details[0].workout_name
 
@@ -115,7 +102,6 @@ def ai_workout():
         running_type = request.args.get('running_type')
 
     if request.method == 'POST':
-
         workout_output = generate_ai_workout(duration, fitness_level, fitness_goal, equipment_access, running_type)
 
         try:
@@ -131,21 +117,19 @@ def ai_workout():
 
 @main.route('/run_workouts')
 def get_run_workouts():
+    workout_type = "run"
     duration = request.args.get('duration')
     fitness_level = request.args.get('fitness_level')
     running_type = request.args.get('running_type')
-    print(duration, fitness_level, running_type)
 
-    workouts = Workout.query.filter(
-        Workout.workout_duration == duration,
-        Workout.fitness_level == fitness_level,
-        Workout.running_type == running_type
-    ).all()
+    print("run workouts: ", workout_type, duration, fitness_level, running_type)
+
+    workouts = get_workout_from_db(workout_type=workout_type, duration=duration,
+                                   fitness_level=fitness_level, running_type=running_type)
 
     if len(workouts) != 0:
-        workout_ids = [workout.workout_id for workout in workouts]
-        selected_workout_id = random.choice(workout_ids)
-        return redirect(url_for('main.display_workout', workout_id=selected_workout_id))
+        workout_id = get_workout_id(workouts)
+        return redirect(url_for('main.display_workout', workout_id=workout_id))
     else:
         return redirect(
             url_for('main.ai_workout', duration=duration, fitness_level=fitness_level, running_type=running_type))
