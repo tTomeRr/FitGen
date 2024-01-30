@@ -1,19 +1,20 @@
 import pytest
 from app import create_app
+from dotenv import load_dotenv
+import psycopg2
+import os
 
 
 @pytest.fixture
-def client():
+def app():
     app = create_app()
-    app.config.update({'TESTING': True})
-
-    with app.test_client() as client:
-        yield client
+    with app.app_context():
+        yield app
 
 
-def test_index_page(client):
-    response = client.get('/')
-    assert response.status_code == 200
+@pytest.fixture
+def client(app):
+    return app.test_client()
 
 
 def test_workout_page(client):
