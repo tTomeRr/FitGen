@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+  
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create env file
+        run: |
+          echo "${{ secrets.ENV_FILE }}" > $GITHUB_WORKSPACE/app/.env
+          echo "${{ secrets.ENV_TEST_FILE }}" > $GITHUB_WORKSPACE/app/tests/.env.test
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+          cache: 'pip'
+          
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt 
+
+      - name: Start services with Docker Compose
+        run: docker-compose up -d
+
+      - name: Wait for healthchecks
+        run: 
+          timeout 60s sh -c 'until docker ps | grep flex_db | grep -q healthy; do echo "Waiting for container to be healthy..."; sleep 2; done'
+
+      - name: Test code with pytest
+        run:
+          echo "$POSTGRES_HOST"
+          pytest app/tests/
+        env:
+          POSTGRES_HOST: localhost
+          
+      - name: Shutdown Docker Compose
+        if: always()
+        run: docker-compose down
+        
+      - name: Remove .env file
+        if: always()
+        run: |
+          rm $GITHUB_WORKSPACE/app/.env
+          rm $GITHUB_WORKSPACE/app/tests/.env.test
