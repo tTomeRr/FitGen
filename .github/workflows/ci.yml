@@ -36,7 +36,6 @@ jobs:
 
       - name: Test code with pytest
         run:
-          echo "$POSTGRES_HOST"
           pytest app/tests/
         env:
           POSTGRES_HOST: localhost
@@ -44,9 +43,20 @@ jobs:
       - name: Shutdown Docker Compose
         if: always()
         run: docker-compose down
+
+      - name: Analysing the code with pylint
+        run: 
+          pylint $GITHUB_WORKSPACE/app/*.py
         
       - name: Remove .env file
         if: always()
         run: |
           rm $GITHUB_WORKSPACE/app/.env
           rm $GITHUB_WORKSPACE/app/tests/.env.test
+
+      - name: Discord notification
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        uses: Ilshidur/action-discord@master
+        with:
+          args: 'The deployment process has completed. Status: ${{ job.status }}.'
