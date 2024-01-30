@@ -1,15 +1,31 @@
-from flask import render_template, request, redirect, url_for, session, Blueprint
-import random
+"""
+This module defines the routing and view logic for the Flask application. It handles
+requests, processes them, and returns appropriate responses, rendering HTML templates
+or redirecting to other endpoints as needed.
+"""
+
 import datetime
-from .utils import send_mail, generate_ai_workout, get_number_of_workouts, \
-    get_number_of_exercises, get_workout_from_db, get_workout_id, get_workout_by_id
-from .models import Workout, Exercises, WorkoutExercises, db
+from flask import render_template, request, redirect, url_for, session, Blueprint
+from .utils import (
+    send_mail,
+    generate_ai_workout,
+    get_number_of_workouts,
+    get_number_of_exercises,
+    get_workout_from_db,
+    get_workout_id,
+    get_workout_by_id,
+)
 
 main = Blueprint('main', __name__)
 
 
 @main.route('/', methods=['GET', 'POST'])
 def index():
+    """
+      Renders the main page and handles form submissions for user messages.
+      Sends an email with user message if the request method is POST.
+      Also fetches counts for exercises and workouts to display on the main page.
+    """
     if request.method == 'POST':
         name = request.form['name']
         email = request.form['email']
@@ -27,11 +43,13 @@ def index():
 
 @main.route('/workout')
 def workout():
+    """Renders the workout page."""
     return render_template('workout.html')
 
 
 @main.route('/workout/run', methods=['GET', 'POST'])
 def run():
+    """Renders the run workout page and handles the user's workout details"""
     if request.method == 'POST':
         duration = request.form['workout-duration']
         level = request.form['fitness-level']
@@ -45,6 +63,7 @@ def run():
 
 @main.route('/workout/strength', methods=['GET', 'POST'])
 def strength():
+    """Renders the strength workout page and handles the user's workout details"""
     if request.method == 'POST':
         duration = request.form['workout-duration']
         level = request.form['fitness-level']
@@ -56,8 +75,10 @@ def strength():
 
     return render_template('strength.html')
 
+
 @main.route('/strength_workouts')
 def get_strength_workouts():
+    """Retrieves and displays strength workouts based on user-provided criteria"""
     workout_type = "strength"
     duration = request.args.get('duration')
     fitness_level = request.args.get('fitness_level')
@@ -70,14 +91,36 @@ def get_strength_workouts():
     if len(workouts) != 0:
         workout_id = get_workout_id(workouts)
         return redirect(url_for('main.display_workout', workout_id=workout_id))
-    else:
-        return redirect(
-            url_for('main.ai_workout', duration=duration, fitness_level=fitness_level, fitness_goal=fitness_goal,
-                    equipment_access=equipment_access))
+
+    return redirect(
+        url_for('main.ai_workout', duration=duration, fitness_level=fitness_level, fitness_goal=fitness_goal,
+                equipment_access=equipment_access))
+
+
+@main.route('/run_workouts')
+def get_run_workouts():
+    """Retrieves and displays run workouts based on user-provided criteria"""
+    workout_type = "run"
+    duration = request.args.get('duration')
+    fitness_level = request.args.get('fitness_level')
+    running_type = request.args.get('running_type')
+
+    print("run workouts: ", workout_type, duration, fitness_level, running_type)
+
+    workouts = get_workout_from_db(workout_type=workout_type, duration=duration,
+                                   fitness_level=fitness_level, running_type=running_type)
+
+    if len(workouts) != 0:
+        workout_id = get_workout_id(workouts)
+        return redirect(url_for('main.display_workout', workout_id=workout_id))
+
+    return redirect(
+        url_for('main.ai_workout', duration=duration, fitness_level=fitness_level, running_type=running_type))
 
 
 @main.route('/display-workout/<int:workout_id>')
 def display_workout(workout_id):
+    """Displays details of a specific workout."""
     workout_details = get_workout_by_id(workout_id)
 
     workout_name = workout_details[0].workout_name
@@ -87,6 +130,7 @@ def display_workout(workout_id):
 
 @main.route('/get_ai_workouts', methods=['GET', 'POST'])
 def ai_workout():
+    """Fetch workout details and generates a workout based on user-provided criteria via AI"""
     if request.method == 'POST':
         duration = request.form.get('duration')
         fitness_level = request.form.get('fitness_level')
@@ -115,28 +159,9 @@ def ai_workout():
     return render_template('no-workouts.html')
 
 
-@main.route('/run_workouts')
-def get_run_workouts():
-    workout_type = "run"
-    duration = request.args.get('duration')
-    fitness_level = request.args.get('fitness_level')
-    running_type = request.args.get('running_type')
-
-    print("run workouts: ", workout_type, duration, fitness_level, running_type)
-
-    workouts = get_workout_from_db(workout_type=workout_type, duration=duration,
-                                   fitness_level=fitness_level, running_type=running_type)
-
-    if len(workouts) != 0:
-        workout_id = get_workout_id(workouts)
-        return redirect(url_for('main.display_workout', workout_id=workout_id))
-    else:
-        return redirect(
-            url_for('main.ai_workout', duration=duration, fitness_level=fitness_level, running_type=running_type))
-
-
 @main.route('/display-ai-workout')
 def display_ai_workout():
+    """Displays details of a specific AI workout."""
     workout_name = session.get('workout_name', 'Default Workout')
     workout_details_tuples = session.get('workout_details', [])
     workout_details = [
@@ -148,16 +173,16 @@ def display_ai_workout():
 
 
 @main.errorhandler(404)
-def page_not_found(e):
-
+def page_not_found(_):
+    """Renders a custom 404 error page."""
     error_code = 404
     error_message = "We can't find the page you're looking for."
     return render_template('error.html', error_code=error_code, error_message=error_message), 404
 
 
 @main.errorhandler(500)
-def service_unavailable(e):
-
+def service_unavailable(_):
+    """Renders a custom 500 error page."""
     error_code = 500
     error_message = "Internal Server error - It's not you, it's us"
-    return render_template('error.html', error_code=error_code, error_message=error_message), 404
+    return render_template('error.html', error_code=error_code, error_message=error_message), 500

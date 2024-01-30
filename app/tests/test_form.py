@@ -1,3 +1,7 @@
+"""
+This module contains tests for successfully sending an email.
+"""
+
 import pytest
 from app import create_app
 from app.utils import send_mail

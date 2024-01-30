@@ -1,6 +1,11 @@
+"""
+This module initializes the Flask application, configures it with environment variables,
+sets up the database with SQLAlchemy, and registers blueprints for routing.
+"""
+
+import os
 from flask import Flask
 from dotenv import load_dotenv
-import os
 from flask_sqlalchemy import SQLAlchemy
 
 load_dotenv()
@@ -9,6 +14,14 @@ db = SQLAlchemy()
 
 
 def create_app():
+    """
+        Creates and configures an instance of the Flask application. Environment variables are used to
+        set the secret key and database configuration. The SQLAlchemy database instance is initialized
+        with the app, and the main blueprint for routing is registered.
+
+        Returns:
+            app: The instance of the Flask application.
+        """
     app = Flask(__name__)
 
     app.secret_key = os.getenv('APP_SECRET_KEY')

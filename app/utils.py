@@ -1,13 +1,21 @@
-from flask import redirect, url_for, flash
+"""
+This module contains utility functions for sending emails, interacting with an AI to generate workouts,
+querying the database for workout and exercise information, and other miscellaneous functionalities
+needed across the Flask application.
+"""
+
 import os
-import smtplib
-from openai import OpenAI
 import ast
-from .models import Workout, Exercises, WorkoutExercises, db
 import random
+import smtplib
+from flask import flash
+from openai import OpenAI
+from .models import Workout, Exercises, WorkoutExercises, db
 
 
 def send_mail(name, email, phone, message):
+    """Sends an email using the specified Gmail credentials."""
+
     gmail_user = os.getenv('GMAIL_USERNAME')
     gmail_password = os.getenv('GMAIL_PASSWORD')
 
@@ -26,13 +34,15 @@ def send_mail(name, email, phone, message):
         flash("Thanks for reaching us. Your message has been sent!")
         return 'Success'
 
-    except Exception as e:
-        flash(f'Something went wrong. Message not send.')
+    except smtplib.SMTPException as e:
+        flash('Something went wrong. Message not send.')
         print(e)
         return 'Failure'
 
 
 def generate_ai_workout(duration, fitness_level, fitness_goal, equipment_access, running_type):
+    """Generates an AI-based workout plan using the OpenAI API."""
+
     api_key = os.getenv('OPENAI_API_KEY')
     client = OpenAI(api_key=api_key)
 
@@ -44,11 +54,14 @@ def generate_ai_workout(duration, fitness_level, fitness_goal, equipment_access,
                 "content": (
                     f"Create a workout plan with only the workout name and details based on these criteria:\n"
                     f"- Workout Duration: '{duration} minutes'\n- Fitness Level: '{fitness_level}'\n- "
-                    f"Fitness Goal: '{fitness_goal}'\n- Equipment Access: '{equipment_access}'\n- Running Type: '{running_type}'\n\n"
+                    f"Fitness Goal: '{fitness_goal}'\n- Equipment Access: '{equipment_access}'\n- "
+                    f"Running Type: '{running_type}'\n\n"
                     "Format:\n{\n  'workout_name': 'Name of the workout',\n  "
-                    "'workout_details': [('Exercise Name', 'Description', Sets, Repetitions, 'Rest Time in minutes'), ...]\n}\n"
+                    "'workout_details': [('Exercise Name', 'Description',"
+                    " Sets, Repetitions, 'Rest Time in minutes'), ...]\n}\n"
                     "Note: Provide the response in this exact format, without any additional text.\n"
-                    "Provide a workout name that reflects the workout's focus and goal, e.g., 'Intense Cardio Circuit' or 'Beginners Full-Body Strength. with no punctuation marks"
+                    "Provide a workout name that reflects the workout's focus and goal, e.g., 'Intense Cardio Circuit' "
+                    "or 'Beginners Full-Body Strength. with no punctuation marks"
                 )
             }
         ]
@@ -61,15 +74,18 @@ def generate_ai_workout(duration, fitness_level, fitness_goal, equipment_access,
 
 
 def get_number_of_workouts():
+    """Return number of workouts."""
     return db.session.query(Workout).count() // 10 * 10
 
 
 def get_number_of_exercises():
+    """Return number of exercises."""
     return db.session.query(Exercises).count() // 10 * 10
 
 
 def get_workout_from_db(workout_type, duration, fitness_level, fitness_goal=None, equipment_access=None,
                         running_type=None):
+    """Return workout from the database based on user-provided criteria."""
     workouts = Workout.query.filter(
         Workout.workout_type == workout_type,
         Workout.workout_duration == duration,
@@ -85,12 +101,17 @@ def get_workout_from_db(workout_type, duration, fitness_level, fitness_goal=None
 
 
 def get_workout_id(workouts):
+    """
+    Return a random workout ID from the database in cass there are more than
+    one workout that fits the user-provided criteria.
+    """
     workout_ids = [workout.workout_id for workout in workouts]
     selected_workout_id = random.choice(workout_ids)
     return selected_workout_id
 
 
 def get_workout_by_id(workout_id):
+    """ Returns all the workout exercises from the database by a workout ID."""
     workout_details = db.session.query(
         Workout.workout_name,
         Exercises.exercise_name,

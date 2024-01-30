@@ -1,8 +1,12 @@
-from dotenv import load_dotenv
-import pytest
-from app import create_app, db
-import psycopg2
+"""
+This module contains tests for database connectivity and data retrieval for the Flask application.
+"""
+
 import os
+import pytest
+from dotenv import load_dotenv
+from app import create_app
+import psycopg2
 
 
 @pytest.fixture
@@ -12,9 +16,11 @@ def app():
     with app.app_context():
         yield app
 
+
 @pytest.fixture
 def client(app):
     return app.test_client()
+
 
 def test_db_connection(app):
     try:
@@ -27,6 +33,7 @@ def test_db_connection(app):
     except (psycopg2.DatabaseError, Exception) as error:
         print(error)
         pytest.fail(f"Database connection failed: {error}")
+
 
 def test_database_retrieval(client):
     sql_statement = """
@@ -49,5 +56,3 @@ def test_database_retrieval(client):
                 results = cur.fetchall()
                 print(results)
                 assert results
-
-

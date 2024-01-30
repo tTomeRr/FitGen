@@ -1,8 +1,9 @@
+"""
+This module contains tests for checking the responses of the flask application web pages.
+"""
+
 import pytest
 from app import create_app
-from dotenv import load_dotenv
-import psycopg2
-import os
 
 
 @pytest.fixture
