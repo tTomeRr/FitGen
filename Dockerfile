@@ -11,7 +11,7 @@ RUN pip install -r requirements.txt
 
 ENV FLASK_APP=app
 
-CMD ["python3","app.py"]
+CMD ["python3","run.py"]
 
 
 
