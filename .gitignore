@@ -2,7 +2,7 @@
 .venv
 venv/
 env/
-
+app/tests/.env.test
 .idea
 .idea/
 
