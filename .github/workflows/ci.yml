@@ -53,6 +53,7 @@ jobs:
           rm $GITHUB_WORKSPACE/app/tests/.env.test
 
       - name: Discord notification
+        if: always()
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
         uses: Ilshidur/action-discord@master
