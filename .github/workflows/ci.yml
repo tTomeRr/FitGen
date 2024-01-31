@@ -37,8 +37,6 @@ jobs:
       - name: Test code with pytest
         run:
           pytest app/tests/
-        env:
-          POSTGRES_HOST: localhost
           
       - name: Shutdown Docker Compose
         if: always()

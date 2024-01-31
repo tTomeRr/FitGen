@@ -27,7 +27,8 @@ def test_db_connection(app):
         with psycopg2.connect(
                 dbname=os.getenv('POSTGRES_DB'),
                 user=os.getenv('POSTGRES_USER'),
-                password=os.getenv('POSTGRES_PASSWORD')
+                password=os.getenv('POSTGRES_PASSWORD'),
+                host='localhost'
         ) as conn:
             print('Connected to the PostgreSQL server.')
     except (psycopg2.DatabaseError, Exception) as error:
@@ -49,6 +50,7 @@ def test_database_retrieval(client):
                 dbname=os.getenv('POSTGRES_DB'),
                 user=os.getenv('POSTGRES_USER'),
                 password=os.getenv('POSTGRES_PASSWORD'),
+                host='localhost'
 
         ) as conn:
             with conn.cursor() as cur:
