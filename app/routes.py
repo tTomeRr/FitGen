@@ -165,10 +165,16 @@ def display_ai_workout():
     workout_name = session.get('workout_name', 'Default Workout')
     workout_details_tuples = session.get('workout_details', [])
     workout_details = [
-        {'exercise_name': detail[0], 'exercise_description': detail[1],
-         'sets': detail[2], 'repetitions': detail[3], 'rest_time': detail[4]}
+        {
+            'exercise_name': detail[0],
+            'exercise_description': detail[1] if len(detail) > 1 else 'No description',
+            'sets': detail[2] if len(detail) > 2 else 'No sets info',
+            'repetitions': detail[3] if len(detail) > 3 else 'No repetitions info',
+            'rest_time': detail[4] if len(detail) > 4 else 'No rest time info'
+        }
         for detail in workout_details_tuples
     ]
+
     return render_template('workouts.html', workout_name=workout_name, exercises=workout_details)
 
 

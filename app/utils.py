@@ -61,15 +61,19 @@ def generate_ai_workout(duration, fitness_level, fitness_goal, equipment_access,
                     " Sets, Repetitions, 'Rest Time in minutes'), ...]\n}\n"
                     "Note: Provide the response in this exact format, without any additional text.\n"
                     "Provide a workout name that reflects the workout's focus and goal, e.g., 'Intense Cardio Circuit' "
-                    "or 'Beginners Full-Body Strength. with no punctuation marks"
+                    "or 'Beginners Full-Body Strength', with no punctuation marks.\n\n"
+                    "For running workouts, if sets or rest times are not applicable, please default them to 1. "
+                    "This means if a running exercise does not involve multiple sets or specific rest times, "
+                    "you should still include '1' for sets and '1' for rest time in the workout details."
                 )
             }
         ]
+
     )
 
     workout_output = completion.choices[0].message.content
     workout_output = workout_output.replace("'", '"')
-
+    print(ast.literal_eval(workout_output))
     return ast.literal_eval(workout_output)
 
 
