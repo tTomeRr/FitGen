@@ -45,8 +45,39 @@ jobs:
       - name: Analysing the code with pylint
         run: 
           pylint $GITHUB_WORKSPACE/app/*.py
-        
-      - name: Remove .env file
+
+      - name: Configure AWS credentials
+        if: success()
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-central-1
+  
+      - name: Login to Amazon ECR
+        if: success()
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+  
+      - name: Build, tag, and push image 1 to Amazon ECR
+        if: success()
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: flex_app
+        run: |
+          docker build -t $ECR_REGISTRY/flex-repository:$IMAGE_TAG . -f Dockerfile-app
+          docker push $ECR_REGISTRY/flex-repository:$IMAGE_TAG
+  
+      - name: Build, tag, and push image 2 to Amazon ECR
+        if: success()
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: flex_db 
+        run: |
+          docker build -t $ECR_REGISTRY/flex-repository:$IMAGE_TAG . -f Dockerfile-db
+          docker push $ECR_REGISTRY/flex-repository:$IMAGE_TAG
+
+      - name: Remove .env files
         if: always()
         run: |
           rm $GITHUB_WORKSPACE/app/.env
