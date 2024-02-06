@@ -89,4 +89,4 @@ jobs:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
         uses: Ilshidur/action-discord@master
         with:
-          args: 'The deployment process has completed. Status: ${{ job.status }}.'
+          args: 'The CI process has completed. Status: ${{ job.status }}. Moving to CD.'
