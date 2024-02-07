@@ -9,8 +9,8 @@ If no existing workout aligns with the user's preferences, the application can c
 
 ## Project Architcture
 
-
-## Screenshots
+![flex-app-diagram](https://github.com/tTomeRr/Flex/assets/129614080/53d1ebd5-4221-40a5-99fe-b01886b95301)
+![sql](https://github.com/tTomeRr/Flex/assets/129614080/2f0f7b01-69f1-4cc6-bdb9-0df4424966ce)
 
 
 ## Installation and Setup Instructions
@@ -53,3 +53,12 @@ After months of study, watching hundreds of lectures, and going through thousand
 During the process of completing the project, I encountered lot of problems and bugs. It was challenging, but overcoming these obstacles and progressing step by step towards completion was rewarding.
 Although the project may not be the best in terms of performance and efficiency, I'm proud of myself for finishing it, I learned a lot,
 and I'm looking forward to working on more projects and expanding my knowledge with additional tools as I continue my DevOps journey.
+
+
+## Screenshots
+![Screenshot 1](https://github.com/tTomeRr/Flex/assets/129614080/ee9e5746-6ac4-4cad-9ea9-6ca602fd30f2)
+![Screenshot 2](https://github.com/tTomeRr/Flex/assets/129614080/f591c817-3238-41f0-8728-65aa5b2ac304)
+![Screenshot 3](https://github.com/tTomeRr/Flex/assets/129614080/9746f700-25a3-4308-8ee7-eccb3e7b90c1)
+![Screenshot 4](https://github.com/tTomeRr/Flex/assets/129614080/8c066a39-a573-4ad8-b483-06fd37f76444)
+![Screenshot 5](https://github.com/tTomeRr/Flex/assets/129614080/b53df931-bbd5-41ff-a08e-49c9253a9a0a)
+![Screenshot 6](https://github.com/tTomeRr/Flex/assets/129614080/3965a814-62bb-45b8-977e-55d5423d211e)
