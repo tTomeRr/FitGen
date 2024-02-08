@@ -9,7 +9,7 @@ If no existing workout aligns with the user's preferences, the application can c
 
 ## Project Architcture
 
-![flex-app-diagram](https://github.com/tTomeRr/Flex/assets/129614080/2050ae86-a9f5-4230-9814-5533a2babee3)
+![flex-diagram](https://github.com/tTomeRr/Flex/assets/129614080/e4611cb6-6e7a-4cf7-9a84-ba58c62671d1)
 ![sql](https://github.com/tTomeRr/Flex/assets/129614080/2f0f7b01-69f1-4cc6-bdb9-0df4424966ce)
 
 
