@@ -54,6 +54,15 @@ During the process of completing the project, I encountered lot of problems and 
 Although the project may not be the best in terms of performance and efficiency, I'm proud of myself for finishing it, I learned a lot,
 and I'm looking forward to working on more projects and expanding my knowledge with additional tools as I continue my DevOps journey.
 
+## Contributing
+
+Contributions are welcome! Please feel free to submit pull requests or open issues for any improvements or bug fixes.
+
+
+## License
+
+[MIT](https://choosealicense.com/licenses/mit/)
+
 
 ## Screenshots
 ![Screenshot 1](https://github.com/tTomeRr/Flex/assets/129614080/ee9e5746-6ac4-4cad-9ea9-6ca602fd30f2)
