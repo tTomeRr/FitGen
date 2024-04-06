@@ -46,14 +46,6 @@ If no existing workout aligns with the user's preferences, the application can c
 
 `localhost:5000`
 
-## Reflection
-
-This was my final project for my DevOps bootcamp. The main goal of the project was to create a Flask application with full CI/CD DevOps tools, utilizing the technologies we had learned so far.
-After months of study, watching hundreds of lectures, and going through thousands of notes, this was my first real experience applying all the DevOps tools we've been taught.
-During the process of completing the project, I encountered lot of problems and bugs. It was challenging, but overcoming these obstacles and progressing step by step towards completion was rewarding.
-Although the project may not be the best in terms of performance and efficiency, I'm proud of myself for finishing it, I learned a lot,
-and I'm looking forward to working on more projects and expanding my knowledge with additional tools as I continue my DevOps journey.
-
 ## Contributing
 
 Contributions are welcome! Please feel free to submit pull requests or open issues for any improvements or bug fixes.
